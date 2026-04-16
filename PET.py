@@ -1,5 +1,5 @@
 import os, time
-from tkinter import *
+#from tkinter import *
 
 class Evidence:
     def __init__ (self, box=0, dots=0, emf=0, freezing=0, orb=0, uv=0, writing=0):
@@ -81,10 +81,8 @@ def ClearInputEvidenceFile(): #works
     open("InputEvidenceFile.txt", "x")
 
 def EvidenceCheck(checkEvidence: str): #works
-    print("sem jsem se dostal")
     with open("InputEvidenceFile.txt", "r") as f: #if its been used - 1 if not - 0 NOT WORKING CHECK LOGIC
         for line in f:
-            print("sem taky")
             print(checkEvidence)
             if(line == checkEvidence):   
                 print("Evidence has already been registered!")
@@ -96,9 +94,7 @@ def WriteInputEvidenceFile(inputtedEvidence: str): #DONT WRITE EVIDENCE WHEN ITS
     if(funcContinue != 1):   
         with open("InputEvidenceFile.txt", "a") as f:
             f.write(f"'{inputtedEvidence}'\n")
-            print("negr")
     print(funcContinue)
-    print("inputebuaduzwabzdashdvgawgduawhdbhawbzd")
 
 def ReadInputEvidenceFile(): #works
     with open("InputEvidenceFile.txt", "r") as f:
@@ -113,11 +109,11 @@ def InitGhostEvidenceFile(): #works
             for ghost, ghostAttributesttributes in ghostDict.items(): #name, evidence in dict with ghosts
                 attributeTempDict = vars(ghostAttributesttributes)
                 ghostNameWrite = f"{ghost};"
-                f.write(ghostNameWrite)
-                for attributeName, attributeValue in attributeTempDict.items():
-                    if(attributeValue == 1):
-                        attributeWriteString = f"{attributeName};"
-                        f.write(attributeWriteString)
+                f.write(ghostNameWrite) #writes ghost name first
+                for attributeName, attributeValue in attributeTempDict.items(): #goes through all attributes in the temporary dictionary for each ghost
+                    if(attributeValue == 1): #checks attribute value
+                        attributeWriteString = f"'{attributeName}';" #makes evidence as 'evidence'
+                        f.write(attributeWriteString) #writes that evidence down
                 f.write("\n")
             break
 
@@ -141,16 +137,26 @@ def GhostEvidence(): #works
 def PossibleGhosts(evidenceCount: int): #not finished
     if(evidenceCount != 0):
         evidenceArray = []
-        arrayIndex = 0
-        possibleGhostArray = []
         with open("InputEvidenceFile.txt", "r") as f:
             for line in f:
-                lineString = line.strip().strip("").strip('') #removes \n "" and ''
+                lineString = line.strip().strip("")
                 evidenceArray.append(lineString)
         with open("GhostEvidenceFile.txt", "r") as f:
-            for line in f:
+            matchingEvidence = 0
+            for line in f: #for each line in all lines
+                lineArray = line.strip().split(';') #strips "" and splits using ;
+                lineArrayIndex = 0
+                possibleGhostArray = []  
+                for eachAttribute in range(len(lineArray) - 1): #for each attribute of each ghost
+                    for evidenceString, evidenceKey in evidenceDict.items(): #evidence as string, evidence as key in all items of evidence dictionary
+                        if(lineArray[lineArrayIndex] == evidenceKey):
+                            matchingEvidence = matchingEvidence + 1
+                            possibleGhostArray.append(lineArray[0])
+                        lineArrayIndex = lineArrayIndex + 1
                 if(evidenceCount == matchingEvidence):
-
+                    break
+            for eachGhost in range(len(possibleGhostArray)):
+                print(possibleGhostArray[eachGhost])
     else:
         print("All the ghosts!")
 
