@@ -62,6 +62,16 @@ evidenceDict = {
     "Ghost Writing": 'writing'
 }
 
+evidenceKeyDict = {
+    "b": 'box',
+    "d": 'dots',
+    "e": 'emf',
+    "f": 'freezing',
+    "o": 'orb',
+    "u": 'uv',
+    "w": 'writing'
+}
+
 version = "v2.0.0"
 
 try:
@@ -165,6 +175,34 @@ def IdentifyGhost(): #not finished
         print("Can't be any ghost!")
     print(identificationGhost)
 
+def DeleteSpecificEvidence(a: str):
+    if len(a) < 3:
+        print("Invalid input format! Use '2 <space> <key>'")
+        return
+    evidenceKey = a[2]
+    evidenceToRemove = ""
+    for dictKey, dictValue in evidenceKeyDict.items(): 
+        if dictKey == evidenceKey:
+            evidenceToRemove = dictValue
+            break
+    if evidenceToRemove == "":
+        print("Unknown evidence key!")
+        return
+    evidenceArray = []
+    with open("InputEvidenceFile.txt", "r") as f:
+        for line in f:
+            cleanLine = line.strip().strip("'")
+            evidenceArray.append(cleanLine)
+    if evidenceToRemove in evidenceArray:
+        evidenceArray.remove(evidenceToRemove)
+    else:
+        print("This evidence hasn't been registered yet!")
+        return
+    with open("InputEvidenceFile.txt", "w") as f:
+        for remainingEvidence in evidenceArray:
+            f.write(f"'{remainingEvidence}'\n")
+    print(f"Evidence '{evidenceToRemove}' has been removed.")
+
 def Main():
 
     InitGhostEvidenceFile()
@@ -192,9 +230,10 @@ def Main():
         print("[W] - Ghost Writing")
         
         print("\n[1] - Exit")
-        print("[2] - Clear Evidence")
-        print("[3] - Possible Ghosts")
-        print("[4] - Ghost Evidence")
+        print("[2] - Clear Specific Evidence (2 <space> evidence key)")
+        print("[3] - Clear All Evidence")
+        print("[4] - Possible Ghosts")
+        print("[5] - Ghost Evidence")
         print("-----")
 
         choice = input("> ").lower()
@@ -219,15 +258,18 @@ def Main():
             elif(choice == "w"):
                 WriteInputEvidenceFile("writing")
             else:
-                print("Incorrect input!")
+                if(choice[0] == "2"): #choice - 2
+                    DeleteSpecificEvidence(choice)
+                else:
+                    print("Incorrect input!!")
         else:
             if(choice == 1):
                 break
-            elif(choice == 2):
-                ClearInputEvidenceFile()
             elif(choice == 3):
-                PossibleGhosts(evidenceCount)
+                ClearInputEvidenceFile()
             elif(choice == 4):
+                PossibleGhosts(evidenceCount)
+            elif(choice == 5):
                 GhostEvidence()
             else:
                 print("Incorrect input!")
