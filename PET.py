@@ -1,5 +1,4 @@
 import os, time
-#from tkinter import *
 
 class Evidence:
     def __init__ (self, box=0, dots=0, emf=0, freezing=0, orb=0, uv=0, writing=0):
@@ -10,13 +9,10 @@ class Evidence:
         self.orb = orb
         self.uv = uv
         self.writing = writing
-        
-
-    #def NazevMetody(self,)
 
 ghostDict = {
     "Banshee": Evidence(dots=1, orb=1, uv=1),
-    "Demon (Démon)": Evidence(freezing=1, uv=1, writing=1),
+    "Demon": Evidence(freezing=1, uv=1, writing=1),
     "Dayan": Evidence(box=1, emf=1, orb=1),
 
     "Deogen": Evidence(box=1, dots=1, writing=1),
@@ -35,7 +31,7 @@ ghostDict = {
     "Oni": Evidence(dots=1, emf=1, freezing=1),
     "Onryo": Evidence(box=1, freezing=1, orb=1),
 
-    "Phantom (Fantom)": Evidence(box=1, dots=1, uv=1),
+    "Phantom": Evidence(box=1, dots=1, uv=1),
     "Poltergeist": Evidence(box=1, uv=1, writing=1),
     "Raiju": Evidence(dots=1, emf=1, orb=1),
 
@@ -44,8 +40,8 @@ ghostDict = {
     "Spirit": Evidence(box=1, emf=1, writing=1),
 
     "Thaye": Evidence(dots=1, orb=1, writing=1),
-    "The Mimic (Mimik)": Evidence(box=1, freezing=1, orb=1, uv=1),
-    "The Twins (Dvojčata)": Evidence(box=1, emf=1, freezing=1),
+    "The Mimic": Evidence(box=1, freezing=1, orb=1, uv=1),
+    "The Twins": Evidence(box=1, emf=1, freezing=1),
 
     "Wraith": Evidence(box=1, dots=1, emf=1),
     "Yokai": Evidence(box=1, dots=1, orb=1),
@@ -53,7 +49,7 @@ ghostDict = {
 }
 
 evidenceDict = {
-    "Spirit Box": 'spirit box',
+    "Spirit Box": 'box',
     "D.O.T.S": 'dots',
     "EMF 5": 'emf',
     "Freezing": 'freezing',
@@ -86,7 +82,7 @@ open("InputEvidenceFile.txt", "x")
 def Clear(): #works - clears the console
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def InputEvidencePrint(a):
+def InputEvidencePrint(a): #works - prints selected evidence in the menu
     evidenceArray = []
     with open("InputEvidenceFile.txt", "r") as f:
         for line in f:
@@ -102,6 +98,7 @@ def InputEvidencePrint(a):
 def ClearInputEvidenceFile(): #works - clears input evidence file
     os.remove("InputEvidenceFile.txt")
     open("InputEvidenceFile.txt", "x")
+    print("Evidence cleared succesfully!\n")
 
 def EvidenceCheck(checkEvidence: str): #works - checks if the selected evidence hasnt already been used
     with open("InputEvidenceFile.txt", "r") as f:
@@ -137,45 +134,60 @@ def InitGhostEvidenceFile(): #works - creates the ghost evidence file with each 
                 f.write("\n")
             break
 
-def GhostEvidence(): #works - prints selected ghost's evidence
+def GhostEvidence(): #works - print ghost's evidence
     Clear()
-    desiredGhost = input("Which ghosts evidence do you want to check?\n> ").capitalize()
+    desiredGhost = input("Which ghosts evidence do you want to check?\n> ").strip().lower()
     with open("GhostEvidenceFile.txt", "r") as f:
         for line in f:
             lineArray = line.strip().split(';')
-            if(lineArray[0] == desiredGhost): #if the name matches
-                print(f"{desiredGhost}:\n") #print ghost name
-                evidenceIndex = 1
+            ghostName = lineArray[0]
+            if desiredGhost in ghostName.lower():
+                Clear()
+                print(f"{ghostName}:\n")
                 for evidenceString, evidenceKey in evidenceDict.items():
-                    if(lineArray[evidenceIndex] == evidenceKey):
+                    if f"'{evidenceKey}'" in lineArray:
                         print(f"- {evidenceString}")
-                        evidenceIndex = evidenceIndex + 1
-                        if(lineArray[4] != ""):
-                            print(f"- {lineArray[4]}")
-        print("Invalid ghost name!")
+                print("-----\nType anything to continue:\n")
+                anything = input("> ")
+                if(anything != None):
+                    Clear()
+                    return
+    Clear()        
+    print("Invalid ghost name!")
+    print("-----\nType anything to continue:\n")
+    anything = input("> ")
+    if(anything != None):
+        Clear()
+        return    
 
-def PossibleGhosts(evidenceCount: int): #works
-    if(evidenceCount != 0):
-        evidenceArray = []
-        with open("InputEvidenceFile.txt", "r") as f:
-            for line in f:
-                lineString = line.strip().strip("")
-                evidenceArray.append(lineString)
-        with open("GhostEvidenceFile.txt", "r") as f:
-            print("Possible ghosts:\n")
-            for line in f: 
-                lineArray = line.strip().split(';') 
-                ghostName = lineArray[0] 
-                matchingEvidence = 0
-                for currentEvidence in evidenceArray:
-                    if currentEvidence in lineArray:
-                        matchingEvidence = matchingEvidence + 1
-                if(matchingEvidence == evidenceCount): 
-                    print(f"- {ghostName}")
-    else:
-        print("All the ghosts!")
+def PossibleGhosts(evidenceCount: int): #works - prints all the possible ghosts from the imported evidence
+    while True:
+        if(evidenceCount != 0):
+            evidenceArray = []
+            with open("InputEvidenceFile.txt", "r") as f:
+                for line in f:
+                    lineString = line.strip().strip("")
+                    evidenceArray.append(lineString)
+            with open("GhostEvidenceFile.txt", "r") as f:
+                print("Possible ghosts:\n")
+                for line in f: 
+                    lineArray = line.strip().split(';') 
+                    ghostName = lineArray[0] 
+                    matchingEvidence = 0
+                    for currentEvidence in evidenceArray:
+                        if currentEvidence in lineArray:
+                            matchingEvidence = matchingEvidence + 1
+                    if(matchingEvidence == evidenceCount): 
+                        print(f"- {ghostName}")
+        else:
+            print("All the ghosts!")
+        print("\nType anything to continue:\n")
+        anything = input("> ")
+        if(anything != None):
+            Clear()
+            return
 
-def IdentifyGhost():
+def IdentifyGhost(): #works - identifies the ghost as soon as you enter all the requiered evidence
     identificationGhost = []
     with open("InputEvidenceFile.txt", "r") as f:
         for line in f:
@@ -200,7 +212,7 @@ def IdentifyGhost():
                 possibleCount = possibleCount + 1
                 foundGhost = ghostName
     if(possibleCount == 1):
-        print(f"\nGhost identified: {foundGhost}!")
+        print(f"Ghost identified:\n-----\n\n{foundGhost}!\n\n-----")
         return foundGhost
     elif(possibleCount == 0):
         print("Can't be any ghost!")
@@ -233,9 +245,9 @@ def DeleteSpecificEvidence(a: str): #works - deletes specified evidence
     with open("InputEvidenceFile.txt", "w") as f:
         for remainingEvidence in evidenceArray:
             f.write(f"'{remainingEvidence}'\n")
-    print(f"Evidence '{evidenceToRemove}' has been removed.")
+    print(f"Evidence '{evidenceToRemove}' has been removed.\n")
 
-def Main():
+def Main(): #works - main program loop
 
     InitGhostEvidenceFile()
 
@@ -324,14 +336,12 @@ def Main():
             exitChoice = input("\nDo you want to exit? (y/n)\n> ").lower()
             if(exitChoice == "y"):
                 ClearInputEvidenceFile()
+                Clear()
                 return 1
             else:
-                Clear()
                 ClearInputEvidenceFile()
+                Clear()
                 return 0
-
-    ClearInputEvidenceFile()
-    return 1
 
 Clear()
 while True:
@@ -346,4 +356,5 @@ while True:
     open("InputEvidenceFile.txt", "x")
 
     if(trueEnd == 1):
+        print("Thanks for using our software!\n")
         break
