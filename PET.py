@@ -86,6 +86,19 @@ open("InputEvidenceFile.txt", "x")
 def Clear(): #works - clears the console
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def InputEvidencePrint(a):
+    evidenceArray = []
+    with open("InputEvidenceFile.txt", "r") as f:
+        for line in f:
+            formattedLine = line.strip().strip("'") 
+            index = 0
+            for currentEvidence, currentEvidenceKey in evidenceKeyDict.items():
+                if currentEvidenceKey == formattedLine:
+                    evidenceArray.append(a[index])
+                index += 1
+    for evidence in evidenceArray:
+        print(f"- {evidence}")
+
 def ClearInputEvidenceFile(): #works - clears input evidence file
     os.remove("InputEvidenceFile.txt")
     open("InputEvidenceFile.txt", "x")
@@ -228,14 +241,14 @@ def Main():
 
     evidenceCount = 0
     evidenceArray = ["Spirit Box", "D.O.T.S", "EMF 5", "Freezing", "Ghost Orbs", "Ultraviolet", "Ghost Writing"]
-    evidenceIndexArray = [0,0,0,0,0,0,0]
-    identificationGhost = Evidence()
 
     while True:
 
         evidenceCount = ReadInputEvidenceFile()
         if(evidenceCount >= 1):
             print(f"Select a piece of evidence ( {evidenceCount} / 4 ):")
+            print("-----")
+            InputEvidencePrint(evidenceArray)
         else:
             print("Select a piece of evidence:")
         print("-----")
@@ -263,34 +276,47 @@ def Main():
 
         if(type(choice) == str):
             if(choice == "b"):
+                Clear()
                 WriteInputEvidenceFile("box")
             elif(choice == "d"):
+               Clear()
                WriteInputEvidenceFile("dots")
             elif(choice == "e"):
+                Clear()
                 WriteInputEvidenceFile("emf")
             elif(choice == "f"):
+                Clear()
                 WriteInputEvidenceFile("freezing")
             elif(choice == "o"):
+                Clear()
                 WriteInputEvidenceFile("orb")
             elif(choice == "u"):
+               Clear()
                WriteInputEvidenceFile("uv")
             elif(choice == "w"):
+                Clear()
                 WriteInputEvidenceFile("writing")
             else:
+                Clear()
                 if(choice[0] == "2"): #choice - 2
                     DeleteSpecificEvidence(choice)
                 else:
                     print("Incorrect input!!")
         else:
             if(choice == 1):
+                Clear()
                 break
             elif(choice == 3):
+                Clear()
                 ClearInputEvidenceFile()
             elif(choice == 4):
+                Clear()
                 PossibleGhosts(evidenceCount)
             elif(choice == 5):
+                Clear()
                 GhostEvidence()
             else:
+                Clear()
                 print("Incorrect input!")
 
         found = IdentifyGhost()
@@ -300,12 +326,14 @@ def Main():
                 ClearInputEvidenceFile()
                 return 1
             else:
+                Clear()
                 ClearInputEvidenceFile()
                 return 0
 
     ClearInputEvidenceFile()
     return 1
 
+Clear()
 while True:
     trueEnd = Main()
     try:
@@ -316,6 +344,6 @@ while True:
 
     open("GhostEvidenceFile.txt", "x")
     open("InputEvidenceFile.txt", "x")
-    
+
     if(trueEnd == 1):
         break
